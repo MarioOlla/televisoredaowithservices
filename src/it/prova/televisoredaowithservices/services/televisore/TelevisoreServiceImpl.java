@@ -1,9 +1,13 @@
 package it.prova.televisoredaowithservices.services.televisore;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.prova.televisoredaowithservices.DAO.Constants;
 import it.prova.televisoredaowithservices.DAO.televisore.TelevisoreDAO;
+import it.prova.televisoredaowithservices.connection.MyConnection;
 import it.prova.televisoredaowithservices.model.Televisore;
 
 public class TelevisoreServiceImpl implements TelevisoreService {
@@ -18,38 +22,92 @@ public class TelevisoreServiceImpl implements TelevisoreService {
 
 	@Override
 	public List<Televisore> listAll() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Televisore> result = new ArrayList<>();
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.list();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public Televisore findById(Long idInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Televisore result = null;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.get(idInput);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public int aggiorna(Televisore input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.update(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public int inserisciNuovo(Televisore input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.insert(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public int rimuovi(Televisore input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.delete(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public List<Televisore> findByExample(Televisore input) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Televisore> result = new ArrayList<>();
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.findByExample(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
