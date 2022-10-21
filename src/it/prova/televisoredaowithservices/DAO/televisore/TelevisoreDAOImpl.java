@@ -26,14 +26,16 @@ public class TelevisoreDAOImpl extends AbstractMySQLDAO implements TelevisoreDAO
 			throw new Exception("Impossibile effettuare operazioni sul DB. La connessione non e' attiva.");
 		List<Televisore> result = new ArrayList<>();
 		try (Statement ps = connection.createStatement(); ResultSet rs = ps.executeQuery("select * from televisore;")) {
-			if (rs.next())
+			while (rs.next())
 
 				// estraiDaDB si occupa di "riempire" con i valori giusti le variabili di
 				// istanza
+
 				result.add(this.estraiDaDB(rs));
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
 		return result;
 	}
@@ -147,20 +149,59 @@ public class TelevisoreDAOImpl extends AbstractMySQLDAO implements TelevisoreDAO
 
 	@Override
 	public List<Televisore> tuttiITelevisoriProdottiTraDate(Date dataDa, Date dataA) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (isNotActive())
+			throw new Exception("Impossibile effettuare operazioni sul DB. La connessione non e' attiva.");
+		if (dataDa == null || dataA == null)
+			throw new Exception("Impossibile effettuare la ricerca. Input non valido.");
+		List<Televisore> result = new ArrayList<>();
+		try (PreparedStatement ps = connection
+				.prepareStatement("select * from televisore where dataproduzione between ? and ?;")) {
+			ps.setDate(1, DateConverter.fromUtilToSql(dataDa));
+			ps.setDate(2, DateConverter.fromUtilToSql(dataA));
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					result.add(this.estraiDaDB(rs));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public Televisore ilTelevisorePiuGrande() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (isNotActive())
+			throw new Exception("Impossibile effettuare operazioni sul DB. La connessione non e' attiva.");
+		Televisore result = null;
+		try (Statement ps = connection.createStatement();
+				ResultSet rs = ps.executeQuery("select * from televisore order by pollici limit 1;")) {
+			if (rs.next())
+
+				result = estraiDaDB(rs);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
-	public String listaMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> listaMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception {
+		if (isNotActive())
+			throw new Exception("Impossibile effettuare operazioni sul DB. La connessione non e' attiva.");
+		List<String> result = new ArrayList<>();
+		try (Statement ps = connection.createStatement();
+				ResultSet rs = ps.executeQuery(
+						"select distinct marca from televisore where dataproduzione > DATE_SUB(curdate(), INTERVAL 6 MONTH);")) {
+			while (rs.next())
+				result.add(rs.getString("marca"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	// metodi di utilita'

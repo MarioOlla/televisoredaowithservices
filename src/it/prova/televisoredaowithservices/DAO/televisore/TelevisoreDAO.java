@@ -10,5 +10,5 @@ public interface TelevisoreDAO extends IBaseDAO<Televisore> {
 	
 	public List<Televisore> tuttiITelevisoriProdottiTraDate(Date dataDa, Date dataA)throws Exception;
 	public Televisore ilTelevisorePiuGrande() throws Exception;
-	public String listaMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception;
+	public List<String> listaMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception;
 }

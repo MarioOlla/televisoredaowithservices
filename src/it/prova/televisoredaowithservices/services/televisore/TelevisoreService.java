@@ -26,6 +26,6 @@ public interface TelevisoreService {
 	
 	public Televisore findTelevisorePiuGrande() throws Exception;
 	
-	public String listMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception;
+	public List<String> listMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception;
 
 }

@@ -1,11 +1,13 @@
 package it.prova.televisoredaowithservices.test;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import it.prova.televisoredaowithservices.model.Televisore;
 import it.prova.televisoredaowithservices.services.MyServiceFactory;
 import it.prova.televisoredaowithservices.services.televisore.TelevisoreService;
+import it.prova.televisoredaowithservices.utility.DateConverter;
 
 public class testTelevisore {
 
@@ -13,6 +15,7 @@ public class testTelevisore {
 		TelevisoreService televisoreService = MyServiceFactory.getTelevisoreServiceImpl();
 
 		try {
+			System.out.println("=====Inizio Test Televisore===============================================================");
 
 			testInserisciNuovo(televisoreService);
 			System.out.println("In tabella ci sono " + televisoreService.listAll().size() + " elementi.");
@@ -25,9 +28,20 @@ public class testTelevisore {
 
 			testAggiorna(televisoreService);
 			System.out.println("In tabella ci sono " + televisoreService.listAll().size() + " elementi.");
-
+			
+			testAllTelevisoriProdottiTraDate(televisoreService);
+			System.out.println("In tabella ci sono " + televisoreService.listAll().size() + " elementi.");
+			
+			testFindTelevisorePiuGrande(televisoreService);
+			System.out.println("In tabella ci sono " + televisoreService.listAll().size() + " elementi.");
+			
+			testListaMarcheTelevisoriProdottiUltimiSeiMesi(televisoreService);
+			System.out.println("In tabella ci sono " + televisoreService.listAll().size() + " elementi.");
+			
 			testRimuovi(televisoreService);
 			System.out.println("In tabella ci sono " + televisoreService.listAll().size() + " elementi.");
+			
+			System.out.println("=====Fine Test Televisore=================================================================");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,11 +87,45 @@ public class testTelevisore {
 			throw new RuntimeException("testAggiorna : FAILED, il DB e' vuoto.");
 		Long idDaAggiornare = televisoreService.listAll().get(0).getId();
 		Televisore daAggiornare = new Televisore(idDaAggiornare, "Phillips", "BNXIWKRE", 40,
-				new SimpleDateFormat("dd-MM-yyyy").parse("05-03-2020"));
+				DateConverter.fromUtilToSql( new SimpleDateFormat("dd-MM-yyyy").parse("05-03-2020")));
 		int result = televisoreService.aggiorna(daAggiornare);
 		if (result < 1)
 			throw new RuntimeException("testAggiorna : FAILED, non e' stato modificato alcun record.");
 		System.out.println("___fine testAggiorna : PASSED");
+	}
+	
+	private static void testAllTelevisoriProdottiTraDate(TelevisoreService televisoreService)throws Exception{
+		System.out.println("\n___inizio testAllTelevisoriProdottiTraDate...");
+		if (televisoreService.listAll().isEmpty())
+			throw new RuntimeException("testAllTelevisoriProdottiTraDate : FAILED, il DB e' vuoto.");
+		List<Televisore> result = televisoreService.allTelevisoriProdottiTraDate(new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2020"), new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2021"));
+		if (result.isEmpty())
+			throw new RuntimeException("testAllTelevisoriProdottiTraDate : FAILED, la ricerca non ha prodotto i risultati desiderati.");
+		System.out.println("___fine testAllTelevisoriProdottiTraDate : PASSED");
+	}
+	
+	private static void testFindTelevisorePiuGrande(TelevisoreService televisoreService)throws Exception{
+		System.out.println("\n___inizio testFindTelevisorePiuGrande...");
+		if (televisoreService.listAll().isEmpty())
+			throw new RuntimeException("testFindTelevisorePiuGrande : FAILED, il DB e' vuoto.");
+		Televisore result = televisoreService.findTelevisorePiuGrande();
+		if (!result.getId().equals(televisoreService.listAll().get(0).getId()))
+			throw new RuntimeException("testFindTelevisorePiuGrande : FAILED, la ricerca non ha prodotto i risultati desiderati.");
+		System.out.println("___fine testFindTelevisorePiuGrande : PASSED");
+	}
+	
+	private static void testListaMarcheTelevisoriProdottiUltimiSeiMesi(TelevisoreService televisoreService)throws Exception{
+		System.out.println("\n___inizio testListaMarcheTelevisoriProdottiUltimiSeiMesi...");
+		Date negliUltimiSeiMesi = new SimpleDateFormat("dd-MM-yyyy").parse("01-09-2022");
+		Televisore prodottoNegliUltimiSeiMesi = new Televisore(null, "Sony", "KD43X72K", 43,
+				negliUltimiSeiMesi);
+		if (televisoreService.inserisciNuovo(prodottoNegliUltimiSeiMesi) < 1)
+			throw new RuntimeException("testListaMarcheTelevisoriProdottiUltimiSeiMesi : FAILED, inserimento preliminare non avvenuto.");
+		List<String> result = televisoreService.listMarcheTelevisoriProdottiUltimiSeiMesi();
+		if (result.isEmpty())
+			throw new RuntimeException("testListaMarcheTelevisoriProdottiUltimiSeiMesi : FAILED, la ricerca non ha prodotto i risultati desiderati.");
+		televisoreService.rimuovi(televisoreService.listAll().get(0));
+		System.out.println("___fine testListaMarcheTelevisoriProdottiUltimiSeiMesi : PASSED");
 	}
 
 	private static void testRimuovi(TelevisoreService televisoreService) throws Exception {
@@ -90,5 +138,5 @@ public class testTelevisore {
 			throw new RuntimeException("testRimuovi : FAILED, elemento non cancellato.");
 		System.out.println("___fine testRimuovi : PASSED");
 	}
-
+	
 }

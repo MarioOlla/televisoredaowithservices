@@ -112,20 +112,47 @@ public class TelevisoreServiceImpl implements TelevisoreService {
 
 	@Override
 	public List<Televisore> allTelevisoriProdottiTraDate(Date dataDa, Date dataA) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Televisore> result = new ArrayList<>();
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.tuttiITelevisoriProdottiTraDate(dataDa, dataA);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public Televisore findTelevisorePiuGrande() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Televisore result = null;
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.ilTelevisorePiuGrande();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
-	public String listMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> listMarcheTelevisoriProdottiUltimiSeiMesi() throws Exception {
+		List<String> result = new ArrayList<>();
+		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
+
+			televisoreDAO.setConnection(connection);
+
+			result = televisoreDAO.listaMarcheTelevisoriProdottiUltimiSeiMesi();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 }
