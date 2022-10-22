@@ -175,7 +175,7 @@ public class TelevisoreDAOImpl extends AbstractMySQLDAO implements TelevisoreDAO
 			throw new Exception("Impossibile effettuare operazioni sul DB. La connessione non e' attiva.");
 		Televisore result = null;
 		try (Statement ps = connection.createStatement();
-				ResultSet rs = ps.executeQuery("select * from televisore order by pollici limit 1;")) {
+				ResultSet rs = ps.executeQuery("select * from televisore order by pollici desc limit 1;")) {
 			if (rs.next())
 
 				result = estraiDaDB(rs);
